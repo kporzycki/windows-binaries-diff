@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div>Original File: {{OriginalPeFile.Location}}</div>
+    <div>New File: {{NewPeFile.Location}}</div>
+
+    <div>
+        RemovedFunctions:
+        <ul>
+            {% for function in ExportFunctionChangeset.Removed -%}
+            <li>{{ function }}</li>
+            {% endfor -%}
+        </ul>
+    </div>
+
+    <div>
+        AddedFunctions:
+        <ul>
+            {% for function in ExportFunctionChangeset.Added -%}
+            <li>{{ function }}</li>
+            {% endfor -%}
+        </ul>
+    </div>
+
+    <div>
+        SameFunctions:
+        <ul>
+            {% for function in ExportFunctionChangeset.Same -%}
+            <li>{{ function }}</li>
+            {% endfor -%}
+        </ul>
+    </div>
+</body>
+</html>
