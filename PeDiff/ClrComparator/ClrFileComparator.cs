@@ -22,6 +22,12 @@ namespace PeDiff.ClrComparator
 
         public void CompareFiles(string originalFileName, string newFileName, string resultFileName)
         {
+            var result = CompareFiles(originalFileName, newFileName);
+            File.WriteAllText(resultFileName, result);
+        }
+
+        public string CompareFiles(string originalFileName, string newFileName)
+        {
             var originalAssembly = Assembly.LoadFile(originalFileName);
             var newAssembly = Assembly.LoadFile(newFileName);
             var classesChangesetComputer = new ChangeSetComputer<Type>(new TypeNameEqualityComparer());
@@ -33,8 +39,7 @@ namespace PeDiff.ClrComparator
                 ClassesChangeset = classesChangesetComputer.GetChangeSet(originalAssembly.ExportedTypes, newAssembly.ExportedTypes)
             };
 
-            var result = _template.Render(Hash.FromAnonymousObject(viewModel));
-            File.WriteAllText(resultFileName, result);
+            return _template.Render(Hash.FromAnonymousObject(viewModel));
         }
     }
 }

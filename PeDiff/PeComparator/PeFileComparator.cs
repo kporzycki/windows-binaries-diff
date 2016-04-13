@@ -24,6 +24,12 @@ namespace PeDiff
 
         public void CompareFiles(string originalFileName, string newFileName, string resultFileName)
         {
+            var result = CompareFiles(originalFileName, newFileName);
+            File.WriteAllText(resultFileName, result);
+        }
+
+        public string CompareFiles(string originalFileName, string newFileName)
+        {
             var originalPe = new PeFile(originalFileName);
             var newPe = new PeFile(newFileName);
             var exportFunctionChangesetComputer =
@@ -36,9 +42,9 @@ namespace PeDiff
                 ExportFunctionChangeset = exportFunctionChangesetComputer.GetChangeSet(originalPe.ExportedFunctions,
                     newPe.ExportedFunctions)
             };
-            
-            var result = _template.Render(Hash.FromAnonymousObject(viewModel));
-            File.WriteAllText(resultFileName, result);
+
+            return _template.Render(Hash.FromAnonymousObject(viewModel));
         }
+
     }
 }

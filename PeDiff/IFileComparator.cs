@@ -9,5 +9,6 @@ namespace PeDiff
     interface IFileComparator
     {
         void CompareFiles(string originalFileName, string newFileName, string resultFileName);
+        string CompareFiles(string originalFileName, string newFileName);
     }
 }
