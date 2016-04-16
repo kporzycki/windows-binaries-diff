@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Security.Policy;
 using HandlebarsDotNet;
 using PeNet;
 
@@ -9,21 +8,6 @@ namespace PeDiff.PeComparator
 {
     public class PeFileComparator : IFileComparator
     {
-        private readonly Func<object, string> _template;
-
-        static PeFileComparator()
-        {
-            //Template.NamingConvention = new CSharpNamingConvention();
-            DotLiquidHelpers.RegisterViewModel(typeof(PeViewModel));
-            DotLiquidHelpers.RegisterViewModel(typeof(PeFile));
-            //DotLiquidHelpers.RegisterViewModel(typeof(ChangeSet<string>));
-        }
-
-        public PeFileComparator()
-        {
-            _template = Handlebars.Compile(new StreamReader("res/PeTemplate.html").ReadToEnd());
-        }
-
         public void CompareFiles(string originalFileName, string newFileName, string resultFileName)
         {
             var result = CompareFiles(originalFileName, newFileName);
@@ -32,7 +16,7 @@ namespace PeDiff.PeComparator
 
         public string CompareFiles(string originalFileName, string newFileName)
         {
-            var _template = Handlebars.Compile(new StreamReader("res/PeTemplate.html").ReadToEnd());
+            var template = Handlebars.Compile(new StreamReader("res/PeTemplate.html").ReadToEnd());
 
             var originalPe = new PeFile(originalFileName);
             var newPe = new PeFile(newFileName);
@@ -49,10 +33,7 @@ namespace PeDiff.PeComparator
                     newPe.ExportedFunctions.Select(ef => ef.Name).ToList())
             };
 
-            var result = _template(viewModel);
-            return result;
-            //var hash = Hash.FromAnonymousObject(viewModel);
-            //return _template.Render(hash);
+            return template(viewModel);
         }
 
 

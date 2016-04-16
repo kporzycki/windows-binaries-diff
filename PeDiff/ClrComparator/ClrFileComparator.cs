@@ -1,25 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using HandlebarsDotNet;
+using Mono.Cecil;
 
 namespace PeDiff.ClrComparator
 {
     public class ClrFileComparator : IFileComparator
     {
-        //private readonly Template _template;
-
-        static ClrFileComparator()
-        {
-            DotLiquidHelpers.RegisterViewModel(typeof(ClrViewModel));
-            DotLiquidHelpers.RegisterViewModel(typeof(Assembly));
-        }
-
-        public ClrFileComparator()
-        {
-            //_template = Template.Parse(new StreamReader("res/ClrTemplate.html").ReadToEnd());
-            //Template.NamingConvention = new CSharpNamingConvention();
-        }
-
         public void CompareFiles(string originalFileName, string newFileName, string resultFileName)
         {
             var result = CompareFiles(originalFileName, newFileName);
@@ -28,27 +17,34 @@ namespace PeDiff.ClrComparator
 
         public string CompareFiles(string originalFileName, string newFileName)
         {
-            var originalAssembly = Assembly.LoadFile(originalFileName);
-            var newAssembly = Assembly.LoadFile(newFileName);
-            var classesChangesetComputer = new ChangeSetComputer<Type>(new TypeNameEqualityComparer());
+            var template = Handlebars.Compile(new StreamReader("res/ClrTemplate.html").ReadToEnd());
+            var originalModule = ModuleDefinition.ReadModule(originalFileName);
+            var newModule = ModuleDefinition.ReadModule(newFileName);
+            var originalAssembly = originalModule.Assembly;
+            var newAssembly = newModule.Assembly;
+            //var classesChangesetComputer = new ChangeSetComputer<string>(new ExportedTypeNameEqualityComparer());
+            var classesChangesetComputer =
+                new ChangeSetComputer<string>(StringComparer.InvariantCulture);
 
             var viewModel = new ClrViewModel
             {
                 OriginalAssembly = originalAssembly,
                 NewAssembly = newAssembly,
                 MetadataComparison = CompareMetadata(originalAssembly, newAssembly),
-                ClassesChangeset = classesChangesetComputer.GetChangeSet(originalAssembly.ExportedTypes, newAssembly.ExportedTypes)
+                ClassesChangeset = classesChangesetComputer.GetChangeSet(originalModule.Types.Select(et => et.Name).ToArray(),
+                    newModule.Types.Select(et => et.Name).ToArray())
             };
 
-            //return _template.Render(Hash.FromAnonymousObject(viewModel));
-            return "error, remove me";
+            return template(viewModel);
         }
 
-        private static ComparisonResult[] CompareMetadata(Assembly originalAssembly, Assembly newAssembly)
+        private static ComparisonResult[] CompareMetadata(AssemblyDefinition originalAssembly, AssemblyDefinition newAssembly)
         {
+            var originalEntryPoint = originalAssembly.EntryPoint != null ? originalAssembly.EntryPoint.Name : "No Entry Point";
+            var newEntryPoint = newAssembly.EntryPoint != null ? newAssembly.EntryPoint.Name : "No Entry Point";
             return new[]
             {
-                ComparisonResult.CompareValues("Entry point name", originalAssembly.EntryPoint.Name, newAssembly.EntryPoint.Name),
+                ComparisonResult.CompareValues("Entry point name", originalEntryPoint, newEntryPoint),
             };
         }
     }

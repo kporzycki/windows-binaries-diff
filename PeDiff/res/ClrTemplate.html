@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div>Original File: {{OriginalAssembly.FullName}}</div>
+    <div>New File: {{NewAssembly.FullName}}</div>
+
+    <div>
+        Metadata:
+        <ul>
+            {{#each MetadataComparison}}
+            <li>
+                PropertyName: {{PropertyName}}
+                Original: {{ OriginalValue }}
+                New: {{NewValue}}
+                HasValueChanged: {{HasValueChanged}}
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+    <div>
+        RemovedFunctions:
+        <ul>
+            {{#each ClassesChangeset.Removed }}
+            <li>{{ this }}</li>
+            {{/each}}
+        </ul>
+    </div>
+
+    <div>
+        AddedFunctions:
+        <ul>
+            {{#each ClassesChangeset.Added}}
+            <li>{{ this }}</li>
+            {{/each}}
+        </ul>
+    </div>
+
+    <div>
+        SameFunctions:
+        <ul>
+            {{#each ClassesChangeset.Same}}
+            <li>{{ this }}</li>
+            {{/each}}
+        </ul>
+    </div>
+
+</body>
+</html>
