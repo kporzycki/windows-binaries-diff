@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using DotLiquid;
 
 namespace PeDiff
 {
@@ -18,11 +17,11 @@ namespace PeDiff
 
         public static void RegisterSafeTypeWithAllProperties(Type type)
         {
-            Template.RegisterSafeType(type,
-                type
-                    .GetProperties()
-                    .Select(p => p.Name)
-                    .ToArray());
+            //Template.RegisterSafeType(type,
+            //    type
+            //        .GetProperties()
+            //        .Select(p => p.Name)
+            //        .ToArray());
         }
     }
 }

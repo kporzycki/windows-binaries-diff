@@ -1,25 +1,27 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using DotLiquid;
-using PeDiff.PeComparator;
+using System.Security.Policy;
+using HandlebarsDotNet;
 using PeNet;
 
-namespace PeDiff
+namespace PeDiff.PeComparator
 {
     public class PeFileComparator : IFileComparator
     {
-        private readonly Template _template;
+        private readonly Func<object, string> _template;
 
         static PeFileComparator()
         {
+            //Template.NamingConvention = new CSharpNamingConvention();
             DotLiquidHelpers.RegisterViewModel(typeof(PeViewModel));
             DotLiquidHelpers.RegisterViewModel(typeof(PeFile));
+            //DotLiquidHelpers.RegisterViewModel(typeof(ChangeSet<string>));
         }
 
         public PeFileComparator()
         {
-            _template = Template.Parse(new StreamReader("res/PeTemplate.html").ReadToEnd());
+            _template = Handlebars.Compile(new StreamReader("res/PeTemplate.html").ReadToEnd());
         }
 
         public void CompareFiles(string originalFileName, string newFileName, string resultFileName)
@@ -30,21 +32,27 @@ namespace PeDiff
 
         public string CompareFiles(string originalFileName, string newFileName)
         {
+            var _template = Handlebars.Compile(new StreamReader("res/PeTemplate.html").ReadToEnd());
+
             var originalPe = new PeFile(originalFileName);
             var newPe = new PeFile(newFileName);
             var exportFunctionChangesetComputer =
-                new ChangeSetComputer<PeFile.ExportFunction>(new PeExportFunctionComparator());
+                new ChangeSetComputer<string>(StringComparer.InvariantCulture);
 
             var viewModel = new PeViewModel
             {
                 OriginalPeFile = originalPe,
                 NewPeFile = newPe,
                 MetadataComparison = CompareMetadata(originalPe, newPe),
-                ExportFunctionChangeset = exportFunctionChangesetComputer.GetChangeSet(originalPe.ExportedFunctions,
-                    newPe.ExportedFunctions)
+                ExportFunctionChangeset = exportFunctionChangesetComputer.GetChangeSet(
+                    originalPe.ExportedFunctions.Select(ef => ef.Name).ToList(),
+                    newPe.ExportedFunctions.Select(ef => ef.Name).ToList())
             };
 
-            return _template.Render(Hash.FromAnonymousObject(viewModel));
+            var result = _template(viewModel);
+            return result;
+            //var hash = Hash.FromAnonymousObject(viewModel);
+            //return _template.Render(hash);
         }
 
 

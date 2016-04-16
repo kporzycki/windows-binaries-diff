@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PeDiff.PeComparator;
 
 namespace wbdApp
 {
@@ -58,16 +59,16 @@ namespace wbdApp
                 return;
             }
 
-            try
-            {
+            //try
+            //{
                 generatedHTML = comapreFiles(file1, file2);
                 webbrowser.NavigateToString(generatedHTML);
                 saveButton.IsEnabled = true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(string.Format("There was an excpetion: {0}", ex.Message), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(string.Format("There was an excpetion: {0}", ex.Message), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
 
         }
 

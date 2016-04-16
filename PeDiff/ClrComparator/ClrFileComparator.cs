@@ -1,13 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using DotLiquid;
 
 namespace PeDiff.ClrComparator
 {
     public class ClrFileComparator : IFileComparator
     {
-        private readonly Template _template;
+        //private readonly Template _template;
 
         static ClrFileComparator()
         {
@@ -17,7 +16,8 @@ namespace PeDiff.ClrComparator
 
         public ClrFileComparator()
         {
-            _template = Template.Parse(new StreamReader("res/ClrTemplate.html").ReadToEnd());
+            //_template = Template.Parse(new StreamReader("res/ClrTemplate.html").ReadToEnd());
+            //Template.NamingConvention = new CSharpNamingConvention();
         }
 
         public void CompareFiles(string originalFileName, string newFileName, string resultFileName)
@@ -40,7 +40,8 @@ namespace PeDiff.ClrComparator
                 ClassesChangeset = classesChangesetComputer.GetChangeSet(originalAssembly.ExportedTypes, newAssembly.ExportedTypes)
             };
 
-            return _template.Render(Hash.FromAnonymousObject(viewModel));
+            //return _template.Render(Hash.FromAnonymousObject(viewModel));
+            return "error, remove me";
         }
 
         private static ComparisonResult[] CompareMetadata(Assembly originalAssembly, Assembly newAssembly)
