@@ -23,8 +23,6 @@ namespace wbdApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        private String file1;
-        private String file2;
 
         private String generatedHTML;
 
@@ -35,17 +33,19 @@ namespace wbdApp
 
         private void Select1File(object sender, RoutedEventArgs e)
         {
-            openFile(file_one_path, ref file1);
+            openFile(file1Path);
         }
 
         private void Select2File(object sender, RoutedEventArgs e)
         {
-            openFile(file_two_path, ref file2);
+            openFile(file2Path);
         }
 
 
         private void DoDiff(object sender, RoutedEventArgs e)
         {
+            String file1 = file1Path.Text;
+            String file2 = file2Path.Text;
 
             if (String.IsNullOrEmpty(file1) || string.IsNullOrEmpty(file2))
             {
@@ -53,11 +53,16 @@ namespace wbdApp
                 return;
             }
 
+            if(!File.Exists(file1) || !File.Exists(file2)){
+                MessageBox.Show("Please select files that exist", "Select files", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             try
             {
-                generatedHTML = comapreFiles();
+                generatedHTML = comapreFiles(file1, file2);
                 webbrowser.NavigateToString(generatedHTML);
-                GetAsHtmlMenu.IsEnabled = true;
+                saveButton.IsEnabled = true;
             }
             catch (Exception ex)
             {
@@ -66,21 +71,25 @@ namespace wbdApp
 
         }
 
-        private string comapreFiles()
+        private string comapreFiles(String file1, String file2)
         {
-            try
+            String type = (String) ((ComboBoxItem) compareType.SelectedValue).Content;
+
+            switch (type)
             {
-                var clrCompactor = new ClrFileComparator();
-                return clrCompactor.CompareFiles(file1, file2);
-            }
-            catch (Exception e)
-            {
-                var peFileComparator = new PeFileComparator();
-                return peFileComparator.CompareFiles(file1, file2);
+                case "CLR":
+                    var clrCompactor = new ClrFileComparator();
+                    return clrCompactor.CompareFiles(file1, file2);
+
+                case "PE":
+                    var peFileComparator = new PeFileComparator();
+                    return peFileComparator.CompareFiles(file1, file2);
+                default:
+                    throw new ArgumentException("Selected type is unsuported");
             }
         }
 
-        private void openFile(Label label2write, ref String fileName)
+        private void openFile(TextBox label2write)
         {
             var dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.Filter = "All(*.exe, *.dll)|*.exe;*.dll|*.exe|*.exe|*.dll|*.dll";
@@ -89,24 +98,15 @@ namespace wbdApp
 
             if (result == true)
             {
-                fileName = dlg.FileName;
-                label2write.Content = rawFilePath(fileName);
+                label2write.Text = dlg.FileName;
             }
             clearBrowser();
         }
 
-        private string rawFilePath(string filepath)
-        {
-            var length = 50;
-            return filepath.Length < length ? filepath : "..." + filepath.Substring(filepath.Length - length);
-        }
-
         private void Clear(object sender, RoutedEventArgs e)
         {
-            file1 = String.Empty;
-            file2 = String.Empty;
-            file_one_path.Content = String.Empty;
-            file_two_path.Content = String.Empty;
+            file1Path.Text = String.Empty;
+            file2Path.Text = String.Empty;
             generatedHTML = String.Empty;
             clearBrowser();
         }
@@ -114,7 +114,7 @@ namespace wbdApp
         private void clearBrowser()
         {
             webbrowser.Navigate("about:blank");
-            GetAsHtmlMenu.IsEnabled = false;
+            saveButton.IsEnabled = false;
         }
 
         private void GetAsHTML(object sender, RoutedEventArgs e)

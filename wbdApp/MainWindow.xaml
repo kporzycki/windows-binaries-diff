@@ -4,24 +4,31 @@
         Title="Windows binaries Diff" Height="350" Width="525" WindowStartupLocation="CenterScreen">
     <Grid Background="#E9EAED">
         <DockPanel>
-            <Menu DockPanel.Dock="Top">
-                <MenuItem Header="Select first file" Click="Select1File"/>
-                <MenuItem Header="Select second file" Click="Select2File"/>
-                <MenuItem Header="Diff" Click="DoDiff"/>
-                <MenuItem Header="Clear" Click="Clear"/>
-                <MenuItem Header="Get result as HTML" Click="GetAsHTML" IsEnabled="False" Name="GetAsHtmlMenu"/>
-            </Menu>
-            <DockPanel DockPanel.Dock="Top" Background="#DCDEE3">
-                <StackPanel>
+            <DockPanel DockPanel.Dock="Top" Background="#DCDEE3" >
+                <DockPanel DockPanel.Dock="Top" Margin="0 5 0 0">
+                    <Label Content="File 1: " DockPanel.Dock="Left"/>
+                    <Button Content="Select" DockPanel.Dock="Right" Margin="10 0" Padding="10 0" Click="Select1File"/>
+                    <TextBox Name="file1Path" Padding="0 3"/>
+                </DockPanel>
+                <DockPanel DockPanel.Dock="Top" Margin="0 5 0 0">
+                    <Label Content="File 2: " DockPanel.Dock="Left"/>
+                    <Button Content="Select" DockPanel.Dock="Right" Margin="10 0" Padding="10 0" Click="Select2File"/>
+                    <TextBox Name="file2Path" Padding="0 3"/>
+                </DockPanel>
+                <DockPanel Margin="0 10 0 5">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="0 0 10 0">
+                        <Button Content="Clear" Margin="10 0 0 0" Padding="10 0" Click="Clear" Name="clearButton"/>
+                        <Button Content="Save as HTML" Margin="10 0 0 0" Padding="10 0" Click="GetAsHTML" Name="saveButton"/>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Label Content="File: " />
-                        <Label Name="file_one_path"/>
+                        <Label Content="Type: " />
+                        <ComboBox Name="compareType" SelectedIndex="0">
+                            <ComboBoxItem IsEnabled="True">CLR</ComboBoxItem>
+                            <ComboBoxItem>PE</ComboBoxItem>
+                        </ComboBox>
+                        <Button Content="Diff" Margin="10 0 0 0" Padding="10 0" Click="DoDiff"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0 2 0 0 ">
-                        <Label Content="File: " />
-                        <Label Name="file_two_path"/>
-                    </StackPanel>
-                </StackPanel>
+                </DockPanel>
             </DockPanel>
             <DockPanel Margin="10" Background="White">
                 <WebBrowser Name="webbrowser" OpacityMask="White"></WebBrowser>
