@@ -39,6 +39,7 @@ namespace PeDiff
             {
                 OriginalPeFile = originalPe,
                 NewPeFile = newPe,
+                MetadataComparison = CompareMetadata(originalPe, newPe),
                 ExportFunctionChangeset = exportFunctionChangesetComputer.GetChangeSet(originalPe.ExportedFunctions,
                     newPe.ExportedFunctions)
             };
@@ -46,5 +47,18 @@ namespace PeDiff
             return _template.Render(Hash.FromAnonymousObject(viewModel));
         }
 
+
+        private static ComparisonResult[] CompareMetadata(PeFile originalPe, PeFile newPe)
+        {
+            return new[]
+            {
+                ComparisonResult.CompareValues("FileSize", originalPe.FileSize, newPe.FileSize),
+                ComparisonResult.CompareValues("Is32Bit", originalPe.Is32Bit, newPe.Is32Bit),
+                ComparisonResult.CompareValues("Is64Bit", originalPe.Is64Bit, newPe.Is64Bit),
+                ComparisonResult.CompareValues("IsExe", originalPe.IsEXE, newPe.IsEXE),
+                ComparisonResult.CompareValues("IsDll", originalPe.IsDLL, newPe.IsDLL),
+                ComparisonResult.CompareValues("IsSigned", originalPe.IsSigned, newPe.IsSigned)
+            };
+        }
     }
 }

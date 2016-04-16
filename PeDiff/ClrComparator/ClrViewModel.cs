@@ -8,5 +8,6 @@ namespace PeDiff.ClrComparator
         public Assembly OriginalAssembly { get; set; }
         public Assembly NewAssembly { get; set; }
         public ChangeSet<Type> ClassesChangeset { get; set; }
+        public ComparisonResult[] MetadataComparison { get; set; }
     }
 }

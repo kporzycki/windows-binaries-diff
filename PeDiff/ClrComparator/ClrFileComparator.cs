@@ -36,10 +36,19 @@ namespace PeDiff.ClrComparator
             {
                 OriginalAssembly = originalAssembly,
                 NewAssembly = newAssembly,
+                MetadataComparison = CompareMetadata(originalAssembly, newAssembly),
                 ClassesChangeset = classesChangesetComputer.GetChangeSet(originalAssembly.ExportedTypes, newAssembly.ExportedTypes)
             };
 
             return _template.Render(Hash.FromAnonymousObject(viewModel));
+        }
+
+        private static ComparisonResult[] CompareMetadata(Assembly originalAssembly, Assembly newAssembly)
+        {
+            return new[]
+            {
+                ComparisonResult.CompareValues("Entry point name", originalAssembly.EntryPoint.Name, newAssembly.EntryPoint.Name),
+            };
         }
     }
 }

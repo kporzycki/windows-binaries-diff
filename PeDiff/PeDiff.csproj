@@ -60,6 +60,7 @@
     <Compile Include="ClrComparator\TypeNameEqualityComparer.cs" />
     <Compile Include="DotLiquidHelpers.cs" />
     <Compile Include="IFileComparator.cs" />
+    <Compile Include="ComparisonResult.cs" />
     <Compile Include="PeComparator\PeExportFunctionComparator.cs" />
     <Compile Include="PeComparator\PeFileComparator.cs" />
     <Compile Include="PeComparator\PeViewModel.cs" />
