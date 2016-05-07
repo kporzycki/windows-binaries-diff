@@ -1,0 +1,35 @@
+﻿<div class="type-definition">
+    {{ Name }} : {{ FullName }}
+
+    <span>Methods</span>
+    <ul class="methods">
+        {{#each Methods}}
+        <li>
+            {{#if IsPrivate}}private{{/if}}
+            {{#if IsPublic}}public{{/if}}
+            {{ Name }}
+            (
+            {{#each Parameters}}
+            {{ParameterType.Name}}
+            {{Name}}
+            ,
+            {{/each}}
+            )
+        </li>
+        {{/each}}
+    </ul>
+
+    <span>Properties</span>
+    <ul class="properties">
+        {{#each Properties}}
+        <li>{{ Name }} </li>
+        {{/each}}
+    </ul>
+
+    <span>Fields</span>
+    <ul class="fields">
+        {{#each Fields}}
+        <li>{{ Name }} </li>
+        {{/each}}
+    </ul>
+</div>

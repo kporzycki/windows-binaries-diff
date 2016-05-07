@@ -17,25 +17,41 @@ namespace PeDiff.ClrComparator
 
         public string CompareFiles(string originalFileName, string newFileName)
         {
-            var template = Handlebars.Compile(new StreamReader("res/ClrTemplate.html").ReadToEnd());
-            var originalModule = ModuleDefinition.ReadModule(originalFileName);
-            var newModule = ModuleDefinition.ReadModule(newFileName);
-            var originalAssembly = originalModule.Assembly;
-            var newAssembly = newModule.Assembly;
-            //var classesChangesetComputer = new ChangeSetComputer<string>(new ExportedTypeNameEqualityComparer());
-            var classesChangesetComputer =
-                new ChangeSetComputer<string>(StringComparer.InvariantCulture);
-
-            var viewModel = new ClrViewModel
+            using (var typeDefinitionPartialStreamReader = new StreamReader("res/ClrTypeDefinitionPartial.html"))
             {
-                OriginalAssembly = originalAssembly,
-                NewAssembly = newAssembly,
-                MetadataComparison = CompareMetadata(originalAssembly, newAssembly),
-                ClassesChangeset = classesChangesetComputer.GetChangeSet(originalModule.Types.Select(et => et.Name).ToArray(),
-                    newModule.Types.Select(et => et.Name).ToArray())
-            };
+                var typeDefinitionPartial = Handlebars.Compile(typeDefinitionPartialStreamReader);
+                Handlebars.RegisterTemplate("typeDefinition", typeDefinitionPartial);
+                var template = Handlebars.Compile(File.ReadAllText("res/ClrTemplate.html"));
+                var originalModule = ModuleDefinition.ReadModule(originalFileName);
+                var newModule = ModuleDefinition.ReadModule(newFileName);
+                var originalAssembly = originalModule.Assembly;
+                var newAssembly = newModule.Assembly;
+                var viewModel = new ClrViewModel
+                {
+                    OriginalAssembly = originalAssembly,
+                    NewAssembly = newAssembly,
+                    MetadataComparison = CompareMetadata(originalAssembly, newAssembly),
+                    TypesChangeset = new[]
+                    {
+                        GetTypesChangeset(originalModule, newModule, t => t.IsClass, "Classes"),
+                        GetTypesChangeset(originalModule, newModule, t => t.IsEnum, "Enums"),
+                        GetTypesChangeset(originalModule, newModule, t => t.IsInterface, "Interfaces"),
+                        GetTypesChangeset(originalModule, newModule, t => t.IsValueType, "ValueType")
+                    }
+                };
 
-            return template(viewModel);
+                return template(viewModel);
+            }
+        }
+
+        private static ChangeSet<TypeDefinition> GetTypesChangeset(ModuleDefinition originalModule, ModuleDefinition newModule, Func<TypeDefinition, bool> typePredicate, string name)
+        {
+            var classesChangesetComputer =
+                new ChangeSetComputer<TypeDefinition>(new TypeDefinitionEqualityComparer());
+
+            return classesChangesetComputer.GetChangeSet(name,
+                originalModule.Types.Where(typePredicate).ToArray(),
+                newModule.Types.Where(typePredicate).ToArray());
         }
 
         private static ComparisonResult[] CompareMetadata(AssemblyDefinition originalAssembly, AssemblyDefinition newAssembly)

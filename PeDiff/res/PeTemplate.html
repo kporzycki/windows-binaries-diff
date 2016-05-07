@@ -6,10 +6,10 @@
     <title></title>
 </head>
 <body>
-    <div>Original File: {{OriginalPeFile.Location}}</div>
-    <div>New File: {{NewPeFile.Location}}</div>
+    <div class="original-file">Original File: {{OriginalPeFile.Location}}</div>
+    <div class="new-file">New File: {{NewPeFile.Location}}</div>
 
-    <div>
+    <div class="metadata">
         Metadata:
         <ul>
             {{#each MetadataComparison}}
@@ -22,8 +22,8 @@
             {{/each}}
         </ul>
     </div>
-    <div>
-        Removed Classes:
+    <div class="removed-functions">
+        Removed Functions:
         <ul>
             {{#each ExportFunctionChangeset.Removed }}
             <li>{{ this }}</li>
@@ -31,8 +31,8 @@
         </ul>
     </div>
 
-    <div>
-        Added Classes:
+    <div class="added-functions">
+        Added Functions:
         <ul>
             {{#each ExportFunctionChangeset.Added}}
             <li>{{ this }}</li>
@@ -40,8 +40,8 @@
         </ul>
     </div>
 
-    <div>
-        Same Classes:
+    <div class="same-functions">
+        Same Functions:
         <ul>
             {{#each ExportFunctionChangeset.Same}}
             <li>{{ this }}</li>

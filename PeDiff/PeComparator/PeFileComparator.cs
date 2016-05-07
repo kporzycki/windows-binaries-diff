@@ -29,6 +29,7 @@ namespace PeDiff.PeComparator
                 NewPeFile = newPe,
                 MetadataComparison = CompareMetadata(originalPe, newPe),
                 ExportFunctionChangeset = exportFunctionChangesetComputer.GetChangeSet(
+                    "Exported functions",
                     originalPe.ExportedFunctions.Select(ef => ef.Name).ToList(),
                     newPe.ExportedFunctions.Select(ef => ef.Name).ToList())
             };

@@ -73,7 +73,7 @@
     <Compile Include="ChangeSetComputer.cs" />
     <Compile Include="ClrComparator\ClrFileComparator.cs" />
     <Compile Include="ClrComparator\ClrViewModel.cs" />
-    <Compile Include="ClrComparator\ExportedTypeNameEqualityComparer.cs" />
+    <Compile Include="ClrComparator\TypeDefinitionEqualityComparer.cs" />
     <Compile Include="IFileComparator.cs" />
     <Compile Include="ComparisonResult.cs" />
     <Compile Include="PeComparator\PeFileComparator.cs" />
@@ -91,6 +91,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="res\ClrTemplate.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\ClrTypeDefinitionPartial.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

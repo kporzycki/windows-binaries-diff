@@ -6,10 +6,10 @@
     <title></title>
 </head>
 <body>
-    <div>Original File: {{OriginalAssembly.FullName}}</div>
-    <div>New File: {{NewAssembly.FullName}}</div>
+    <div class="original-file">Original File: {{OriginalAssembly.FullName}}</div>
+    <div class="new-file">New File: {{NewAssembly.FullName}}</div>
 
-    <div>
+    <div class="metadata">
         Metadata:
         <ul>
             {{#each MetadataComparison}}
@@ -22,32 +22,39 @@
             {{/each}}
         </ul>
     </div>
-    <div>
-        RemovedFunctions:
-        <ul>
-            {{#each ClassesChangeset.Removed }}
-            <li>{{ this }}</li>
-            {{/each}}
-        </ul>
-    </div>
 
-    <div>
-        AddedFunctions:
-        <ul>
-            {{#each ClassesChangeset.Added}}
-            <li>{{ this }}</li>
-            {{/each}}
-        </ul>
-    </div>
 
-    <div>
-        SameFunctions:
-        <ul>
-            {{#each ClassesChangeset.Same}}
-            <li>{{ this }}</li>
-            {{/each}}
-        </ul>
+    {{#each TypesChangeset}}
+    <div class="types-changeset">
+        <h2 class="type-name">{{Name}}</h2>
+        <div class="removed-types">
+            Removed:
+            <ul>
+                {{#each Removed }}
+                {{> typeDefinition}}
+                {{/each}}
+            </ul>
+        </div>
+
+        <div class="added-types">
+            Added:
+            <ul>
+                {{#each Added}}
+                {{> typeDefinition}}
+                {{/each}}
+            </ul>
+        </div>
+
+        <div class="same-types">
+            Same:
+            <ul>
+                {{#each Same}}
+                {{> typeDefinition}}
+                {{/each}}
+            </ul>
+        </div>
     </div>
+    {{/each}}
 
 </body>
 </html>

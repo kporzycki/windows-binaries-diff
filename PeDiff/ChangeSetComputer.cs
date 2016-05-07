@@ -12,12 +12,13 @@ namespace PeDiff
             _comparer = comparer;
         }
 
-        public ChangeSet<T> GetChangeSet(IEnumerable<T> originalCollection, IEnumerable<T> newCollection)
+        public ChangeSet<T> GetChangeSet(string name, IEnumerable<T> originalCollection, IEnumerable<T> newCollection)
         {
             var originalArray = originalCollection as T[] ?? originalCollection.ToArray();
             var newArray = newCollection as T[] ?? newCollection.ToArray();
             return new ChangeSet<T>
             {
+                Name = name,
                 Removed = originalArray.Except(newArray, _comparer).ToList(),
                 Added = newArray.Except(originalArray, _comparer).ToList(),
                 Same = originalArray.Intersect(newArray, _comparer).ToList()
