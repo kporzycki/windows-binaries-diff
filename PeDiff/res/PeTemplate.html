@@ -3,51 +3,148 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>Files diff</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #FAFAFA;
+            font-size: 15px;
+            font-family: Calibri;
+        }
+
+        header {
+            border-bottom: 1px solid black;
+            margin-bottom: 10px;
+        }
+
+        header h1 {
+            text-align: center;
+        }
+
+        section {
+            border: 1px solid black;
+            max-width: 1000px;
+            margin: 10px auto;
+            padding: 10px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 5px;
+        }
+
+        section h2 {
+            margin: 0px;
+            font-size: 20px;
+            padding: 0 0 10px;
+        }
+
+        section .center {
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        table.diff {
+            border-collapse: collapse;
+            border: 1px solid black;
+        }
+
+        table.diff th, table.diff td {
+            border: 1px solid black;
+            text-align: center;
+        }
+
+        table.diff th {
+            background: rgba(0,0,0,0.6);
+            color: white;
+        }
+
+        table.diff tr.False td, .same {
+            background: #E8EEF7;
+        }
+
+        table.diff tr.True td, .added {
+            background: #C4DD94;
+        }
+
+        .removed {
+            background: #EAB1A6;
+        }
+
+        section.added ul, section.removed ul {
+            list-style: none;
+        }
+
+        section.added ul li:before {
+            content: '+ ';
+            font-weight: bold;
+        }
+
+
+        section.removed ul li:before {
+            content: '- ';
+            font-weight: bold;
+        }
+    </style>
+
 </head>
 <body>
-    <div class="original-file">Original File: {{OriginalPeFile.Location}}</div>
-    <div class="new-file">New File: {{NewPeFile.Location}}</div>
+    <header>
+        <h1>Libraries diff</h1>
+    </header>
+    <section id="files">
+        <h2>Files:</h2>
+        <div class="center">Original File: <b>{{OriginalPeFile.Location}}</b></div>
+        <div class="center">New File: <b>{{NewPeFile.Location}}</b></div>
+    </section>
 
-    <div class="metadata">
-        Metadata:
-        <ul>
-            {{#each MetadataComparison}}
-            <li>
-                PropertyName: {{PropertyName}}
-                Original: {{ OriginalValue }}
-                New: {{NewValue}}
-                HasValueChanged: {{HasValueChanged}}
-            </li>
-            {{/each}}
-        </ul>
-    </div>
-    <div class="removed-functions">
-        Removed Functions:
+    <section id="metadata">
+        <h2>Metadata:</h2>
+        <table class="diff center">
+            <thead>
+                <tr>
+                    <th>Property name</th>
+                    <th>Original value</th>
+                    <th>New value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each MetadataComparison}}
+                <tr class="{{HasValueChanged}}">
+                    <td>{{PropertyName}}</td>
+                    <td>Original: {{ OriginalValue }}</td>
+                    <td>New: {{NewValue}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </section>
+
+    <section class="removed">
+        <h2>Removed Functions:</h2>
         <ul>
             {{#each ExportFunctionChangeset.Removed }}
             <li>{{ this }}</li>
             {{/each}}
         </ul>
-    </div>
+    </section>
 
-    <div class="added-functions">
-        Added Functions:
+    <section class="added">
+        <h2>Added Functions:</h2>
         <ul>
             {{#each ExportFunctionChangeset.Added}}
             <li>{{ this }}</li>
             {{/each}}
         </ul>
-    </div>
+    </section>
 
-    <div class="same-functions">
-        Same Functions:
+    <section class="same">
+        <h2>Same Functions:</h2>
         <ul>
             {{#each ExportFunctionChangeset.Same}}
             <li>{{ this }}</li>
             {{/each}}
         </ul>
-    </div>
+    </section>
 
 </body>
 </html>

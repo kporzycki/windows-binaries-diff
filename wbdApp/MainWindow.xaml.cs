@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PeDiff.PeComparator;
+using Microsoft.Win32;
 
 namespace wbdApp
 {
@@ -29,7 +30,25 @@ namespace wbdApp
 
         public MainWindow()
         {
+            SetRegistryValue();
+
             InitializeComponent();
+        }
+
+        private void SetRegistryValue()
+        {
+            try
+            {
+                RegistryKey myKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION");
+                if (myKey != null)
+                {
+                    String appName = System.AppDomain.CurrentDomain.FriendlyName;
+                    myKey.SetValue(appName, "10000", RegistryValueKind.DWord);
+                    myKey.Close();
+                }
+            }catch(Exception e){
+
+            }
         }
 
         private void Select1File(object sender, RoutedEventArgs e)
