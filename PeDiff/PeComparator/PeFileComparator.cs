@@ -50,5 +50,7 @@ namespace PeDiff.PeComparator
                 ComparisonResult.CompareValues("IsSigned", originalPe.IsSigned, newPe.IsSigned)
             };
         }
+
+        public Settings Settings { get; set; }
     }
 }

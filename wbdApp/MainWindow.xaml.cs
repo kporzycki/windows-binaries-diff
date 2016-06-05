@@ -78,9 +78,18 @@ namespace wbdApp
                 return;
             }
 
+            var settings = new Settings
+            {
+                CompareClasses = CompareClassesCheckBox.IsChecked.Value,
+                CompareInterfaces = CompareInterfacesCheckBox.IsChecked.Value,
+                CompareValueTypes = CompareValueTypesCheckBox.IsChecked.Value,
+                CompareEnums = CompareEnumsCheckBox.IsChecked.Value,
+                ReverseFilesOrder = ReverseFilesOrderCheckBox.IsChecked.Value,
+                NoEntryPointError = NoEntryPointTextBox.Text
+            };
             //try
             //{
-                generatedHTML = comapreFiles(file1, file2);
+                generatedHTML = comapreFiles(file1, file2, settings);
                 webbrowser.NavigateToString(generatedHTML);
                 saveButton.IsEnabled = true;
             //}
@@ -91,19 +100,25 @@ namespace wbdApp
 
         }
 
-        private string comapreFiles(String file1, String file2)
+        private string comapreFiles(string file1, string file2, Settings settings)
         {
+            if (settings.ReverseFilesOrder)
+            {
+                var temp = file1;
+                file1 = file2;
+                file2 = temp;
+            }
+
             String type = (String) ((ComboBoxItem) compareType.SelectedValue).Content;
 
             switch (type)
             {
                 case "CLR":
-                    var clrCompactor = new ClrFileComparator();
+                    var clrCompactor = new ClrFileComparator {Settings = settings};
                     return clrCompactor.CompareFiles(file1, file2);
 
                 case "PE":
-                    var peFileComparator = new PeFileComparator();
-                    return peFileComparator.CompareFiles(file1, file2);
+                    var peFileComparator = new PeFileComparator {Settings = settings};                    return peFileComparator.CompareFiles(file1, file2);
                 default:
                     throw new ArgumentException("Selected type is unsuported");
             }

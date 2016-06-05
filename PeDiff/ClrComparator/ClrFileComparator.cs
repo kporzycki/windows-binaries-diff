@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -31,17 +32,23 @@ namespace PeDiff.ClrComparator
                     OriginalAssembly = originalAssembly,
                     NewAssembly = newAssembly,
                     MetadataComparison = CompareMetadata(originalAssembly, newAssembly),
-                    TypesChangeset = new[]
-                    {
-                        GetTypesChangeset(originalModule, newModule, t => t.IsClass, "Classes"),
-                        GetTypesChangeset(originalModule, newModule, t => t.IsEnum, "Enums"),
-                        GetTypesChangeset(originalModule, newModule, t => t.IsInterface, "Interfaces"),
-                        GetTypesChangeset(originalModule, newModule, t => t.IsValueType, "ValueType")
-                    }
+                    TypesChangeset = GetTypesChangeset(originalModule, newModule).ToArray()
                 };
 
                 return template(viewModel);
             }
+        }
+
+        private IEnumerable<ChangeSet<TypeDefinition>> GetTypesChangeset(ModuleDefinition originalModule, ModuleDefinition newModule)
+        {
+            if (Settings.CompareClasses)
+                yield return GetTypesChangeset(originalModule, newModule, t => t.IsClass, "Classes");
+            if (Settings.CompareEnums)
+                yield return GetTypesChangeset(originalModule, newModule, t => t.IsEnum, "Enums");
+            if (Settings.CompareInterfaces)
+                yield return GetTypesChangeset(originalModule, newModule, t => t.IsInterface, "Interfaces");
+            if (Settings.CompareValueTypes)
+                yield return GetTypesChangeset(originalModule, newModule, t => t.IsValueType, "ValueType");
         }
 
         private static ChangeSet<TypeDefinition> GetTypesChangeset(ModuleDefinition originalModule, ModuleDefinition newModule, Func<TypeDefinition, bool> typePredicate, string name)
@@ -54,14 +61,16 @@ namespace PeDiff.ClrComparator
                 newModule.Types.Where(typePredicate).ToArray());
         }
 
-        private static ComparisonResult[] CompareMetadata(AssemblyDefinition originalAssembly, AssemblyDefinition newAssembly)
+        private ComparisonResult[] CompareMetadata(AssemblyDefinition originalAssembly, AssemblyDefinition newAssembly)
         {
-            var originalEntryPoint = originalAssembly.EntryPoint != null ? originalAssembly.EntryPoint.Name : "No Entry Point";
-            var newEntryPoint = newAssembly.EntryPoint != null ? newAssembly.EntryPoint.Name : "No Entry Point";
+            var originalEntryPoint = originalAssembly.EntryPoint != null ? originalAssembly.EntryPoint.Name : Settings.NoEntryPointError;
+            var newEntryPoint = newAssembly.EntryPoint != null ? newAssembly.EntryPoint.Name : Settings.NoEntryPointError;
             return new[]
             {
                 ComparisonResult.CompareValues("Entry point name", originalEntryPoint, newEntryPoint),
             };
         }
+
+        public Settings Settings { get; set; }
     }
 }
